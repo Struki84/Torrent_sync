@@ -13,16 +13,6 @@ rescue Timeout::Error, SocketError
   false
 end
 
-@log = Logger.new("log/main.log", "daily")
-@log.datetime_format = "x%F %T"
-
-@host = nil
-if host_exists?(@local_host, @port)
-	@host = @local_host
-else
-	@host = @remote_host
-end
-
 listener = Listen.to(@local_path) do |modified, added, removed|
 	unless added.nil?
 		unless @host.nil?
@@ -32,15 +22,13 @@ listener = Listen.to(@local_path) do |modified, added, removed|
 		  		if sent == total
 		  			TerminalNotifier.notify("Torrent file copied to\n#{@host}", :title => 'Torrent sync', :subtitle => 'Torrent download detected')
 		  			@log.info "copied #{added[0]} to #{@host}"
-		  			puts "#{added[0]}"
-		  			@completed = true
-		  			@file = added[0]
+		  			file = added[0]
 		  		end
 		  	end
 		  end
-		  # if File.exist?(@file) do
+		  # if File.exist?(file) do
 			# 	puts "#{added[0]} exists"
-			# 	File.delete(@file)
+			# 	File.delete(file)
 			# else
 			# 	puts "Nemre ga nac"
 			# end
@@ -51,11 +39,21 @@ listener = Listen.to(@local_path) do |modified, added, removed|
 	end
 end	
 
-Process.daemon
-listener.start # not blocking
-listener.only %r{.torrent$}
-sleep
 
+@log = Logger.new("log/main.log", "daily")
+@log.datetime_format = "x%F %T"
+@host = nil
+if host_exists?(@local_host, @post)
+	@host = @local_host
+else
+	@host = @remote_host
+end
+Process.daemon(true)
+Process.fork do 
+	listener.start # not blocking
+	listener.only %r{.torrent$}
+	sleep
+end
 
 
 
