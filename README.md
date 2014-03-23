@@ -1,5 +1,4 @@
-Torrent Sync
-************
+# Torrent Sync
 
 Usage
 -----
