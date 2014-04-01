@@ -2,6 +2,6 @@
 @local_host = "local.host.address" 				  #eg. my_server.local or local ip 192.168.x.y
 @port = "22"
 @username = "username" 										  #remote ssh username
-@password = "an00biis" 										  #remote ssh password
+@password = "password" 										  #remote ssh password
 @local_path = "/path/to/my/local/folder/" 	#local folder to listen to
 @remote_path = "/path/to/my/remote/folder/" #remote folder location, copy target
